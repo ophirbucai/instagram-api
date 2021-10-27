@@ -32,6 +32,7 @@ router.get('/user/me', auth, usersController.me);
 router.post('/post', auth, upload.single('image'), postsController.create);
 router.get('/post', postsController.getAll);
 router.post('/user', usersController.create);
+router.post('/user/available', usersController.isAvailable);
 router.post('/login', usersController.login);
 router.get('/health', (req, res) => {
     res.sendStatus(200);

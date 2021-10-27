@@ -27,6 +27,16 @@ async function login(req, res) {
     res.json({ token });
 }
 
+async function isAvailable(req, res) {
+    try {
+        const found = await User.findOne({username: req.body.username});
+        res.send(!found);
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+
 async function me(req, res) {
     try {
         const user = await User.findById(req.userId);
@@ -43,5 +53,6 @@ async function me(req, res) {
 module.exports = {
     create,
     login,
+    isAvailable,
     me
 };
