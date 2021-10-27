@@ -1,11 +1,14 @@
 const express = require('express');
 const app = express();
+const routes = require('./config/routes');
 const mongoose = require('mongoose');
 const port = 4000;
+const cors = require('cors');
 
-app.get('/', (req, res) => {
-    res.send('yay!');
-})
+app.use(cors());
+app.use(express.static('public'));
+app.use(express.json());
+app.use(routes);
 
 mongoose.connect('mongodb://localhost:27017/instagram')
     .then(() => {
@@ -14,3 +17,8 @@ mongoose.connect('mongodb://localhost:27017/instagram')
         });
     });
 
+function listen() {
+    app.listen(port, () => {
+        console.log(`App listening at http://localhost:${port}`)
+    });
+}
