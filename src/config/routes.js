@@ -19,7 +19,7 @@ const upload = multer({ storage });
 const auth = (req, res, next) => {
     const token = req.headers['authorization'];
     try {
-        const user = jwt.verify(token, 'shahar');
+        const user = jwt.verify(token, 'top-secret');
         req.userId = user.id;
         next();
     } catch (err) {
@@ -28,12 +28,21 @@ const auth = (req, res, next) => {
     }
 };
 
-router.get('/user/me', auth, usersController.me);
 router.post('/post', auth, upload.single('image'), postsController.create);
-router.get('/post', postsController.getAll);
+router.get('/post', auth, postsController.getAll);
+router.get('/post/:username', auth, postsController.getPosts);
+router.post('/post/:id/like', auth, postsController.like);
+router.post('/post/:id/unlike', auth, postsController.unlike);
+
+router.get('/user/me', auth, usersController.me);
 router.post('/user', usersController.create);
 router.post('/user/available', usersController.isAvailable);
-router.post('/login', usersController.login);
+router.get('/user/:username', auth, usersController.getUser);
+router.get('/search/user/:q', auth, usersController.search);
+router.post('/user/:username/follow', auth, usersController.follow);
+router.post('/user/:username/unfollow', auth, usersController.unfollow);
+
+router.post('/sign-in', usersController.login);
 router.get('/health', (req, res) => {
     res.sendStatus(200);
 });

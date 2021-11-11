@@ -1,4 +1,7 @@
+const mongoose = require('mongoose');
+const User = require("../models/user.js");
 const Post = require("../models/post.js");
+
 
 async function create(req, res) {
     const { body } = req.body;
@@ -17,6 +20,33 @@ async function create(req, res) {
     }
 }
 
+async function getPosts(req, res) {
+    const { username } = req.params;
+    const user = await User.findOne({username});
+    try {
+        const posts = await Post.find({author: user._id }).populate('author');
+        res.send(posts);
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+async function like(req, res) {
+    await Post.findByIdAndUpdate(
+        req.params.id,
+        { $addToSet: { likes: mongoose.Types.ObjectId(req.userId) }}
+    )
+    res.json();
+}
+
+async function unlike(req, res) {
+    await Post.findByIdAndUpdate(
+        req.params.id,
+        { $pull: { likes: mongoose.Types.ObjectId(req.userId) }}
+    )
+    res.json();
+}
+
 async function getAll(req, res) {
     const allPosts = await Post.find({}).populate('author');
     res.json(allPosts);
@@ -24,5 +54,8 @@ async function getAll(req, res) {
 
 module.exports = {
     create,
-    getAll
+    getAll,
+    getPosts,
+    like,
+    unlike
 }

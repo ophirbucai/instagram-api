@@ -6,7 +6,7 @@ const postScheme = new mongoose.Schema({
     },
     likes: {
         type: Array,
-        default: () => []
+        default: []
     },
     author: {
         type: Schema.Types.ObjectId,
