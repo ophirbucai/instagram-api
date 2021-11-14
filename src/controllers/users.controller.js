@@ -84,7 +84,6 @@ async function search(req, res) {
 
 async function follow(req, res) {
     const {username} = req.params;
-    console.log('user')
     const myId = req.userId;
     try {
         const whoToFollow = await User.findOne({username});

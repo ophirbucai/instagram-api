@@ -9,12 +9,22 @@ const storage = multer.diskStorage({
         cb(null, 'public');
     },
     filename: (req, file, cb) => {
-        const extension = file.originalname.split('.').pop();
+        const { fileExtension } = req.body;
         const fileName = (Math.random() + 1).toString(36).substring(7);
-        cb(null, fileName + '.' + extension);
+        cb(null, fileName + '.' + fileExtension);
     }
 });
 const upload = multer({ storage });
+
+const handleFile = (req, res, next) => {
+    if (!req.body.image) {
+        res.sendStatus(400).send('No file uploaded.');
+        return;
+    }
+    const file = atob(req.body.image.split(',').pop());
+    next(file);
+}
+
 
 const auth = (req, res, next) => {
     const token = req.headers['authorization'];
@@ -28,7 +38,7 @@ const auth = (req, res, next) => {
     }
 };
 
-router.post('/post', auth, upload.single('image'), postsController.create);
+router.post('/post', auth, upload.single('image'), handleFile, postsController.create);
 router.get('/post', auth, postsController.getAll);
 router.get('/post/:username', auth, postsController.getPosts);
 router.post('/post/:id/like', auth, postsController.like);

@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const User = require("../models/user.js");
 const Post = require("../models/post.js");
 
-
 async function create(req, res) {
     const { body } = req.body;
     const tempPost = {
@@ -23,12 +22,12 @@ async function create(req, res) {
 async function getPosts(req, res) {
     const { username } = req.params;
     const user = await User.findOne({username});
-    try {
-        const posts = await Post.find({author: user._id }).populate('author');
-        res.send(posts);
-    } catch (e) {
-        console.log(e);
+    const posts = await Post.find({ author: user._id }).populate('author');
+    if (!posts) {
+        res.sendStatus(400);
+        return;
     }
+    res.send(posts);
 }
 
 async function like(req, res) {
