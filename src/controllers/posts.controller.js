@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require("../models/user.js");
 const Post = require("../models/post.js");
+const Comment = require("../models/comment.js")
 
 async function create(req, res) {
     const { body } = req.body;
@@ -46,9 +47,34 @@ async function unlike(req, res) {
     res.json();
 }
 
+async function getOne(req, res) {
+    const { id } = req.params;
+    const post = await (Post.findById(id).populate('author'));
+    res.json(post);
+}
+
 async function getAll(req, res) {
     const allPosts = await Post.find({}).populate('author');
     res.json(allPosts);
+}
+
+async function createComment(req, res) {
+    const comment = new Comment({
+        author: req.userId,
+        post: req.params.id,
+        content: req.body.content
+    });
+    try {
+        const createdComment = await comment.save();
+        res.json(createdComment);
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(400);
+    }
+}
+
+async function getAllComments(req, res) {
+    console.log(req.params.id);
 }
 
 module.exports = {
@@ -56,5 +82,8 @@ module.exports = {
     getAll,
     getPosts,
     like,
-    unlike
+    unlike,
+    getOne,
+    createComment,
+    getAllComments
 }

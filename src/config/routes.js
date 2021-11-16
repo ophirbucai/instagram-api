@@ -32,11 +32,13 @@ const auth = (req, res, next) => {
     }
 };
 
-router.post('/post', auth, upload.single('image'), postsController.create);
-router.get('/post', auth, postsController.getAll);
-router.get('/post/:username', auth, postsController.getPosts);
 router.post('/post/:id/like', auth, postsController.like);
 router.post('/post/:id/unlike', auth, postsController.unlike);
+router.post('/post/:id/comment', auth, postsController.createComment);
+router.get('/post/:id/comment', auth, postsController.getAllComments);
+router.get('/post/:id', auth, postsController.getOne);
+router.get('/post', auth, postsController.getAll);
+router.post('/post', auth, upload.single('image'), postsController.create);
 
 router.get('/user/me', auth, usersController.me);
 router.post('/user', usersController.create);
@@ -45,6 +47,7 @@ router.get('/user/:username', auth, usersController.getUser);
 router.get('/search/user/:q', auth, usersController.search);
 router.post('/user/:username/follow', auth, usersController.follow);
 router.post('/user/:username/unfollow', auth, usersController.unfollow);
+router.get('/user/post/:username', auth, postsController.getPosts);
 
 router.post('/sign-in', usersController.login);
 router.get('/health', (req, res) => {

@@ -1,10 +1,12 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-const Post = require("../models/post.js");
 const mongoose = require("mongoose");
+const md5 = require('md5');
+
 
 async function create(req, res) {
     const user = new User(req.body);
+    user.password = md5(user.password);
     try {
         const savedUser = await user.save();
         res.status(201).send(savedUser);
@@ -19,7 +21,10 @@ async function login(req, res) {
         res.status(403).json({ message: 'One or more of the parameters are missing' });
         return;
     }
-    const userExist = await User.findOne({ username, password });
+    const userExist = await User.findOne({
+        username,
+        password: md5(password)
+    });
     if (!userExist) {
         res.status(403).json({ message: 'One of the parameters is incorrect' });
         return;
@@ -83,18 +88,24 @@ async function search(req, res) {
 }
 
 async function follow(req, res) {
-    const {username} = req.params;
+    const { username } = req.params;
     const myId = req.userId;
     try {
-        const whoToFollow = await User.findOne({username});
+        const whoToFollow = await User.findOne({ username });
         if (!whoToFollow) {
             res.sendStatus(400);
             return;
         }
         await User.findByIdAndUpdate(
-            myId,
-            {$addToSet: {following: mongoose.Types.ObjectId(whoToFollow._id)}}
-        );
+            myId, {
+                $addToSet: {following: mongoose.Types.ObjectId(whoToFollow._id)
+                }
+            });
+        await User.findByIdAndUpdate(
+            whoToFollow._id.toString(), {
+                $addToSet: {followers: mongoose.Types.ObjectId(myId)
+                }
+            });
         res.send();
     } catch (err) {
         res.sendStatus(500)
@@ -111,9 +122,15 @@ async function unfollow(req, res) {
             return;
         }
         await User.findByIdAndUpdate(
-            myId,
-            {$pull: {following: mongoose.Types.ObjectId(whoToUnfollow._id)}}
-        );
+            myId, {
+                $pull: {following: mongoose.Types.ObjectId(whoToUnfollow._id)
+                }
+            });
+        await User.findByIdAndUpdate(
+            whoToUnfollow._id.toString(), {
+                $pull: {followers: mongoose.Types.ObjectId(myId)
+                }
+            });
         res.send();
     } catch (err) {
         res.sendStatus(500)
