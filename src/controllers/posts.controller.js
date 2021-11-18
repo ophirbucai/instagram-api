@@ -5,9 +5,14 @@ const Comment = require("../models/comment.js")
 
 async function create(req, res) {
     const { body } = req.body;
+    console.log('what', req)
+    const arrayOfPaths = [];
+    req.files.map((file) => {
+        arrayOfPaths.push(file.filename)
+    });
     const tempPost = {
         body,
-        image: req.file.filename,
+        images: arrayOfPaths,
         author: req.userId
     };
     const post = new Post(tempPost);
@@ -50,6 +55,7 @@ async function unlike(req, res) {
 async function getOne(req, res) {
     const { id } = req.params;
     const post = await (Post.findById(id).populate('author'));
+    console.log('post', post);
     res.json(post);
 }
 
@@ -57,6 +63,21 @@ async function getAll(req, res) {
     const allPosts = await Post.find({}).populate('author');
     res.json(allPosts);
 }
+
+// async function createComment(req, res) {
+//     const comment = new Comment({
+//         author: req.userId,
+//         post: req.params.id,
+//         content: req.body.content
+//     });
+//     try {
+//         const createdComment = await comment.save();
+//         res.json(createdComment);
+//     } catch (e) {
+//         console.log(e);
+//         res.sendStatus(400);
+//     }
+// }
 
 async function createComment(req, res) {
     const comment = new Comment({
@@ -74,7 +95,14 @@ async function createComment(req, res) {
 }
 
 async function getAllComments(req, res) {
-    console.log(req.params.id);
+    try {
+        const comments = await Comment.find({
+            postId: req.params.id
+        }).populate('author');
+        res.json(comments);
+    } catch (e) {
+        res.sendStatus(500);
+    }
 }
 
 module.exports = {

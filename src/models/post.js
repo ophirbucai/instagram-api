@@ -18,8 +18,12 @@ const postScheme = new mongoose.Schema({
         default: () => new Date()
     },
     image: {
-        type: String,
-        required: true
+        type: String
+    },
+    images: {
+        type: Array,
+        required: true,
+        default: []
     }
 });
 

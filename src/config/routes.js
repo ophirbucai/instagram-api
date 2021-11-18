@@ -1,7 +1,5 @@
-const { base64StringToBlob } = require('blob-util');
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
 const usersController = require('../controllers/users.controller');
 const postsController = require('../controllers/posts.controller');
 const jwt = require('jsonwebtoken');
@@ -38,7 +36,7 @@ router.post('/post/:id/comment', auth, postsController.createComment);
 router.get('/post/:id/comment', auth, postsController.getAllComments);
 router.get('/post/:id', auth, postsController.getOne);
 router.get('/post', auth, postsController.getAll);
-router.post('/post', auth, upload.single('image'), postsController.create);
+router.post('/post', auth, upload.array('images', 5), postsController.create);
 
 router.get('/user/me', auth, usersController.me);
 router.post('/user', usersController.create);
@@ -47,7 +45,7 @@ router.get('/user/:username', auth, usersController.getUser);
 router.get('/search/user/:q', auth, usersController.search);
 router.post('/user/:username/follow', auth, usersController.follow);
 router.post('/user/:username/unfollow', auth, usersController.unfollow);
-router.get('/user/post/:username', auth, postsController.getPosts);
+router.get('/user/:username/post', auth, postsController.getPosts);
 
 router.post('/sign-in', usersController.login);
 router.get('/health', (req, res) => {
