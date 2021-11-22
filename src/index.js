@@ -11,7 +11,7 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(routes);
 
-mongoose.connect("").then(() => {
+mongoose.connect(config.mongoUrl).then(() => {
   app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
   });
