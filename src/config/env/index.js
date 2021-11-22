@@ -5,3 +5,5 @@ let environment = development;
 if (process.env.NODE_ENV === "production") {
   environment = production;
 }
+
+module.exports = environment;
