@@ -1,24 +1,24 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const routes = require('./config/routes');
-const mongoose = require('mongoose');
+const routes = require("./config/routes");
+const mongoose = require("mongoose");
+const config = require("./config/env/index");
 const port = 4000;
-const cors = require('cors');
+const cors = require("cors");
 
 app.use(cors());
-app.use(express.static('public'));
+app.use(express.static("public"));
 app.use(express.json());
 app.use(routes);
 
-mongoose.connect('mongodb://localhost:27017/instagram')
-    .then(() => {
-        app.listen(port, () => {
-            console.log(`App listening at http://localhost:${port}`)
-        });
-    });
+mongoose.connect("").then(() => {
+  app.listen(port, () => {
+    console.log(`App listening at http://localhost:${port}`);
+  });
+});
 
 function listen() {
-    app.listen(port, () => {
-        console.log(`App listening at http://localhost:${port}`)
-    });
+  app.listen(port, () => {
+    console.log(`App listening at http://localhost:${port}`);
+  });
 }

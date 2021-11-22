@@ -5,7 +5,6 @@ const Comment = require("../models/comment.js")
 
 async function create(req, res) {
     const { body } = req.body;
-    console.log('what', req)
     const arrayOfPaths = [];
     req.files.map((file) => {
         arrayOfPaths.push(file.filename)
