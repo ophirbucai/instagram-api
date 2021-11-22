@@ -11,11 +11,16 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(routes);
 
-mongoose.connect(config.mongoUrl).then(() => {
-  app.listen(port, () => {
-    console.log(`App listening at http://localhost:${port}`);
+mongoose
+  .connect(config.mongoUrl)
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`App listening at http://localhost:${port}`);
+    });
+  })
+  .catch((e) => {
+    console.log(e);
   });
-});
 
 function listen() {
   app.listen(port, () => {
