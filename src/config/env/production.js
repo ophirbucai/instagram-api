@@ -1,3 +1,3 @@
 module.exports = {
-  mongoUrl: "mongodb://localhost:27017/instagram",
+  mongoUrl: process.env.MONGO_URL,
 };
